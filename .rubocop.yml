@@ -2,7 +2,7 @@ require: rubocop-rspec
 
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 3.3
   Exclude:
     - "lib/generators/blacklight_maps/templates/**/*"
     - "blacklight-maps.gemspec"
