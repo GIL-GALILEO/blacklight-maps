@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 require 'blacklight'
-require 'blacklight/maps/blacklight_maps_helper'
-
 
 module Blacklight
   module Maps
     class Engine < Rails::Engine
       # Set some default configurations
-      initializer 'blacklight.maps.default_config' do |_app|
+      initializer 'blacklight-maps.default_config' do |_app|
         Blacklight::Configuration.default_values[:view].maps.geojson_field = 'geojson_ssim'
         Blacklight::Configuration.default_values[:view].maps.placename_property = 'placename'
         Blacklight::Configuration.default_values[:view].maps.coordinates_field = 'coordinates_srpt'
@@ -24,16 +22,18 @@ module Blacklight
       end
 
       # Add our helpers
-      initializer 'blacklight.maps.helpers' do |_app|
-        ActiveSupport.on_load(:action_view) do
-          include Blacklight::Maps::BlacklightMapsHelper
+      initializer 'blacklight-maps.helpers' do |_app|
+        Rails.application.config.to_prepare do
+          ActionView::Base.send :include, BlacklightMapsHelper
         end
       end
 
-      # Load rake tasks
+      # This makes our rake tasks visible.
       rake_tasks do
-        Dir.glob(File.expand_path('../../railties/*.rake', __dir__)).each do |railtie|
-          load railtie
+        Dir.chdir(File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))) do
+          Dir.glob(File.join('railties', '*.rake')).each do |railtie|
+            load railtie
+          end
         end
       end
     end
